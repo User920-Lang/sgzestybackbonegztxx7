@@ -13,7 +13,7 @@ router.get('/', (req, res) => {
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>PastBackboneGztxx7</title>
+  <title>ZestyBackboneGztxx7</title>
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
     body{font-family:'Segoe UI',sans-serif;background:#0f0f0f;color:#eee;min-height:100vh}
@@ -83,7 +83,7 @@ router.get('/', (req, res) => {
 </head>
 <body>
 <header>
-  <h1>🏆 PastBackboneGztxx7</h1>
+  <h1>🏆 ZestyBackboneGztxx7</h1>
   <nav>
     <button class="active" onclick="showSection('tournaments',this)">Tournaments</button>
     <button onclick="showSection('bracket',this)">Bracket</button>
