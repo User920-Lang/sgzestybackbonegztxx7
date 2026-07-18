@@ -6,11 +6,11 @@ const CONFIG_PATH = path.join(__dirname, '../../tournament.config.json');
 
 const DEFAULT_CONFIG = {
   id: 10,
-  tournamentName: 'SGPast Tourney 1v1',
+  tournamentName: 'Stumble Zesty 1v1',
   description: '',
-  themeColor: '#0062ff',
-  imageUrl: 'https://cdn.discordapp.com/attachments/1418030482653708329/1498871528253816964/d85dddabdc5d2e8657c1dee908a83634.png?ex=6a282124&is=6a26cfa4&hm=c5c9520bba403c50cfa5873f39250cee357021516ff7c2f871fb8601dd37a507&',
-  iconUrl: 'https://cdn.discordapp.com/attachments/1418030482653708329/1498871528253816964/d85dddabdc5d2e8657c1dee908a83634.png?ex=6a282124&is=6a26cfa4&hm=c5c9520bba403c50cfa5873f39250cee357021516ff7c2f871fb8601dd37a507&',
+  themeColor: '#008000',
+  imageUrl: 'https://cdn.discordapp.com/attachments/1493765303501590639/1526973833007992973/Polish_20260705_175701784.jpg?ex=6a5c4473&is=6a5af2f3&hm=5fe51d6cefb301c9a1713568292c6b02211732b12ea9568e775de4e08ecc1384&',
+  iconUrl: 'https://cdn.discordapp.com/attachments/1493765303501590639/1526973833007992973/Polish_20260705_175701784.jpg?ex=6a5c4473&is=6a5af2f3&hm=5fe51d6cefb301c9a1713568292c6b02211732b12ea9568e775de4e08ecc1384&',
   sponsorImageUrl: '',
   map: 'block dash',
   roundCount: 5,
