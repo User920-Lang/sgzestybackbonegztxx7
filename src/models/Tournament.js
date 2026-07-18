@@ -31,13 +31,13 @@ function createTournament(overrides = {}) {
 
   return {
     id:                  overrides.id || Date.now(),
-    tournamentName:      overrides.tournamentName || 'SGPast Tourney 1v1',
+    tournamentName:      overrides.tournamentName || 'Stumble Zesty 1v1',
     description:         overrides.description || '',
     additionalDescription: '',
-    imageUrl:            overrides.imageUrl || 'https://cdn.discordapp.com/attachments/1418030482653708329/1498871528253816964/d85dddabdc5d2e8657c1dee908a83634.png?ex=6a282124&is=6a26cfa4&hm=c5c9520bba403c50cfa5873f39250cee357021516ff7c2f871fb8601dd37a507&',
-    iconUrl:             overrides.iconUrl || 'https://cdn.discordapp.com/attachments/1418030482653708329/1498871528253816964/d85dddabdc5d2e8657c1dee908a83634.png?ex=6a282124&is=6a26cfa4&hm=c5c9520bba403c50cfa5873f39250cee357021516ff7c2f871fb8601dd37a507&',
+    imageUrl:            overrides.imageUrl || 'https://cdn.discordapp.com/attachments/1493765303501590639/1526973833007992973/Polish_20260705_175701784.jpg?ex=6a5c4473&is=6a5af2f3&hm=5fe51d6cefb301c9a1713568292c6b02211732b12ea9568e775de4e08ecc1384&',
+    iconUrl:             overrides.iconUrl || 'https://cdn.discordapp.com/attachments/1493765303501590639/1526973833007992973/Polish_20260705_175701784.jpg?ex=6a5c4473&is=6a5af2f3&hm=5fe51d6cefb301c9a1713568292c6b02211732b12ea9568e775de4e08ecc1384&',
     sponsorImageUrl:     overrides.sponsorImageUrl || '',
-    themeColor:          overrides.themeColor || '#0062ff',
+    themeColor:          overrides.themeColor || '#008000',
     status:              TournamentStatus.REGISTRATION,
     type:                TournamentType.CLASSIC,
     time:                startTime.toISOString(),
@@ -47,7 +47,7 @@ function createTournament(overrides = {}) {
     map:                 mapData.name,
     mapId:               mapData.id,
     roundCount,
-    gemCost:             parseInt(overrides.gemCost) || 0,
+    gemCost:             parseInt(overrides.gemCost) || 10,
     prizePool:           overrides.prizePool || {
       1: 500,
       2: 250,
