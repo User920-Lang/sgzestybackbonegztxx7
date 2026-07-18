@@ -47,7 +47,7 @@ function createTournament(overrides = {}) {
     map:                 mapData.name,
     mapId:               mapData.id,
     roundCount,
-    gemCost:             parseInt(overrides.gemCost) || 10,
+    gemCost:             parseInt(overrides.gemCost) || 0,
     prizePool:           overrides.prizePool || {
       1: 500,
       2: 250,
