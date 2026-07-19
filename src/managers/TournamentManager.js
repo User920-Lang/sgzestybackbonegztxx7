@@ -32,7 +32,7 @@ class TournamentManagerClass {
   }
 
   saveConfig(data) {
-    const allowed = ['tournamentName', 'description', 'themeColor', 'imageUrl', 'iconUrl', 'sponsorImageUrl', 'map', 'roundCount', 'gemCost'];
+    const allowed = ['tournamentName', 'description', 'themeColor', 'imageUrl', 'iconUrl', 'sponsorImageUrl', 'map', 'roundCount', 'gemCost', 'savedTime'];
     const current = this.loadConfig();
     for (const key of allowed)
       if (data[key] !== undefined) current[key] = data[key];
@@ -42,9 +42,19 @@ class TournamentManagerClass {
 
   init() {
     const config = this.loadConfig();
+
+    // Use saved time if still in the future, otherwise generate new 15min time
+    if (config.savedTime && new Date(config.savedTime) > new Date()) {
+      config.time = config.savedTime;
+    } else {
+      config.time = new Date(Date.now() + 15 * 60 * 1000).toISOString();
+      config.savedTime = config.time;
+      this.saveConfig({ savedTime: config.savedTime });
+    }
+
     const t = createTournament(config);
     this.tournaments.set(t.id, t);
-    console.log(`[TournamentManager] Tournament started: "${t.tournamentName}" (id=${t.id})`);
+    console.log(`[TournamentManager] Tournament started: "${t.tournamentName}" (id=${t.id}) time=${t.time}`);
   }
 
   updateConfig(data) {
@@ -69,7 +79,7 @@ class TournamentManagerClass {
   cancel(tournamentId) {
     const t = this.tournaments.get(Number(tournamentId));
     if (!t) return { error: 'Tournament not found' };
-    t.status = 4; // CANCELLED
+    t.status = 4;
     console.log(`[TournamentManager] Tournament cancelled: ${tournamentId}`);
     return { success: true };
   }
@@ -116,7 +126,7 @@ class TournamentManagerClass {
     const bracket = this.brackets.get(tournament.id) || {};
     Object.assign(bracket, { tournamentId: tournament.id, matches, round: 1, finished: false });
     this.brackets.set(tournament.id, bracket);
-    tournament.status = 2; // IN_PROGRESS
+    tournament.status = 2;
     console.log(`[TournamentManager] Bracket built for tournament ${tournament.id}`);
   }
 
