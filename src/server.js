@@ -20,24 +20,30 @@ app.use(cors());
 app.use(express.json());
 
 app.use(session({
-    secret: '78*18^_A=2q+¨b!*8b2ui1*(*(f32iu92))kda',
+    secret: 'gztxx7_secret_key',
     resave: false,
-    saveUninitialized: false,
-    cookie: {
-        httpOnly: true,
-        sameSite: 'lax'
-    }
-}));
-
-const DASHBOARD_PASSWORD = '78*18^_A=2q+¨b!*8b2ui1*(*(f32iu92))kda';
-
+    saveUninitialized: false
+}));const DASHBOARD_PASSWORD = process.env.DASHBOARD_PASSWORD || '78*18^_A=2q+¨b=2q+¨a^_A=2q';
 app.get('/health', (req, res) => {
     res.json({ status: 'ok', server: 'PastBackboneGztxx7' });
 });
+app.get('/dashboard/token', (req, res) => {
+    res.json({ token: process.env.API_TOKEN || '' });
+});
+function dashboardAuthMiddleware(req, res, next) {
+    if (req.path === '/' || req.path === '/login' || req.path === '/logout') {
+        return next();
+    }
+    if (!req.session.dashboardAuth) {
+        return res.redirect('/dashboard');
+    }
 
+    next();
+}
+app.use('/dashboard', dashboardAuthMiddleware);
 app.get('/dashboard', (req, res) => {
     if (req.session.dashboardAuth) {
-        return res.redirect('/dashboard');
+        return res.redirect('/dashboard/home');
     }
 
     res.send(`
@@ -47,23 +53,23 @@ app.get('/dashboard', (req, res) => {
 <meta charset="UTF-8">
 <title>Dashboard Login</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;}
 body{
-    background:#111;
+    margin:0;
     display:flex;
     justify-content:center;
     align-items:center;
     height:100vh;
+    background:#111;
     font-family:Arial,sans-serif;
 }
 .box{
-    width:360px;
+    width:340px;
     background:#1b1b1b;
     padding:30px;
     border-radius:12px;
 }
 h2{
-    color:white;
+    color:#fff;
     text-align:center;
     margin-bottom:20px;
 }
@@ -73,8 +79,8 @@ input{
     border:none;
     border-radius:8px;
     background:#2b2b2b;
-    color:white;
-    font-size:15px;
+    color:#fff;
+    box-sizing:border-box;
 }
 button{
     width:100%;
@@ -83,11 +89,12 @@ button{
     border:none;
     border-radius:8px;
     background:#2d89ff;
-    color:white;
-    font-size:15px;
+    color:#fff;
     cursor:pointer;
 }
-button:hover{background:#1b6fe0;}
+button:hover{
+    background:#1b6fe0;
+}
 #error{
     color:#ff5555;
     text-align:center;
@@ -99,49 +106,47 @@ button:hover{background:#1b6fe0;}
 
 <div class="box">
     <h2>Dashboard Login</h2>
-
     <input
         id="password"
         type="password"
         placeholder="Password"
         autocomplete="off"
         spellcheck="false"
-        onkeydown="if(event.key==='Enter')login()"
-    >
-
+        onkeydown="if(event.key==='Enter')login()">
     <button onclick="login()">Login</button>
     <div id="error"></div>
 </div>
 
 <script>
 window.onload = () => {
-    const input = document.getElementById("password");
-    input.value = "";
+    const input = document.getElementById('password');
+    input.value = '';
     input.focus();
 };
 
-async function login() {
-    const password = document.getElementById("password").value;
+function login(){
+    const password = document.getElementById('password').value;
 
-    const response = await fetch("/dashboard/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+    fetch('/dashboard/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ password })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if(data.success){
+            window.location.href = '/dashboard/home';
+        } else {
+            document.getElementById('error').textContent = 'Wrong password!';
+        }
     });
-
-    if (response.ok) {
-        window.location.href = "/dashboard";
-    } else {
-        document.getElementById("error").textContent = "Wrong password!";
-    }
 }
 </script>
 
 </body>
 </html>
-`);
+    `);
 });
-
 app.post('/dashboard/login', (req, res) => {
     const { password } = req.body;
 
@@ -150,34 +155,20 @@ app.post('/dashboard/login', (req, res) => {
         return res.json({ success: true });
     }
 
-    res.status(401).json({ success: false, message: 'Wrong password' });
+    return res.json({ success: false });
 });
-
 app.get('/dashboard/logout', (req, res) => {
     req.session.destroy(() => {
         res.redirect('/dashboard');
     });
 });
-
-app.use('/dashboard/home', (req, res, next) => {
-    if (req.session.dashboardAuth) {
-        return next();
-    }
-    res.redirect('/dashboard');
-});
-
-app.use('/dashboard', uiRoutes);
-
+app.use('/dashboard/home', uiRoutes);
 app.use(authMiddleware);
 app.use('/api/tournaments', tournamentRoutes);
 app.use('/api/players', playerRoutes);
-
 wss.on('connection', (ws, req) => handleConnection(ws, req));
-
 TournamentManager.init();
-
 const PORT = process.env.PORT || 3000;
-
 server.listen(PORT, () => {
     console.log(`[PastBackboneGztxx7] Rodando na porta ${PORT}`);
     console.log(`[PastBackboneGztxx7] Dashboard: http://localhost:${PORT}/dashboard`);
