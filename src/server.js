@@ -24,28 +24,36 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser('secret_token_key'));
 
 app.get('/login', (req, res) => {
+    const errorMessage = req.query.error ? '<div class="error">Senha incorreta. Tente novamente.</div>' : '';
+    
     res.send(`
         <!DOCTYPE html>
         <html lang="pt-BR">
         <head>
             <meta charset="UTF-8">
-            <title>Login</title>
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Login - Dashboard</title>
             <style>
-                body { font-family: Arial, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background: #f4f4f9; margin: 0; }
-                .login-container { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); width: 320px; text-align: center; }
-                input[type="password"] { width: 100%; padding: 10px; margin: 15px 0; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
-                button { width: 100%; padding: 10px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; }
-                button:hover { background: #0056b3; }
-                .error { color: red; margin-bottom: 10px; font-size: 14px; }
+                * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+                body { display: flex; justify-content: center; align-items: center; height: 100vh; background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: #f8fafc; }
+                .login-container { background: rgba(30, 41, 59, 0.7); padding: 40px 30px; border-radius: 16px; box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border: 1px solid rgba(255, 255, 255, 0.1); width: 100%; max-width: 400px; text-align: center; }
+                h2 { font-size: 24px; font-weight: 600; margin-bottom: 8px; color: #fff; }
+                p { font-size: 14px; color: #94a3b8; margin-bottom: 24px; }
+                input[type="password"] { width: 100%; padding: 12px 16px; background: rgba(15, 23, 42, 0.6); border: 1px solid #334155; border-radius: 8px; color: #fff; font-size: 16px; transition: all 0.3s ease; outline: none; margin-bottom: 20px; text-align: center; }
+                input[type="password"]:focus { border-color: #38bdf8; box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2); }
+                button { width: 100%; padding: 12px; background: #0284c7; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: 600; transition: background 0.2s ease; }
+                button:hover { background: #0369a1; }
+                .error { background: rgba(239, 68, 68, 0.15); border: 1px solid #ef4444; color: #fca5a5; padding: 10px; border-radius: 8px; font-size: 14px; margin-bottom: 20px; text-align: center; }
             </style>
         </head>
         <body>
             <div class="login-container">
                 <h2>Acesso Restrito</h2>
-                \${req.query.error ? '<div class="error">Senha incorreta!</div>' : ''}
+                <p>Insira a chave mestre para acessar o painel</p>
+                ${errorMessage}
                 <form action="/login" method="POST">
-                    <input type="password" name="password" placeholder="Digite a senha mestre" required autocomplete="off">
-                    <button type="submit">Entrar</button>
+                    <input type="password" name="password" placeholder="••••••••••••" required autocomplete="off">
+                    <button type="submit">Entrar no Dashboard</button>
                 </form>
             </div>
         </body>
