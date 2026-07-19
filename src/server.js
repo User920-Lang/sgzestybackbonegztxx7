@@ -20,7 +20,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use(session({
-    secret: 'gztxx7_secret_key',
+    secret: '78*18^_A=2q+¨b!*8b2ui1*(*(f32iu92))kda',
     resave: false,
     saveUninitialized: false,
     cookie: {
@@ -37,7 +37,7 @@ app.get('/health', (req, res) => {
 
 app.get('/dashboard', (req, res) => {
     if (req.session.dashboardAuth) {
-        return res.redirect('/dashboard/home');
+        return res.redirect('/dashboard');
     }
 
     res.send(`
@@ -130,7 +130,7 @@ async function login() {
     });
 
     if (response.ok) {
-        window.location.href = "/dashboard/home";
+        window.location.href = "/dashboard";
     } else {
         document.getElementById("error").textContent = "Wrong password!";
     }
@@ -166,7 +166,7 @@ app.use('/dashboard/home', (req, res, next) => {
     res.redirect('/dashboard');
 });
 
-app.use('/dashboard/home', uiRoutes);
+app.use('/dashboard', uiRoutes);
 
 app.use(authMiddleware);
 app.use('/api/tournaments', tournamentRoutes);
