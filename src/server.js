@@ -4,21 +4,25 @@ const { WebSocketServer } = require('ws');
 const http = require('http');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
+
 const tournamentRoutes = require('./routes/tournaments');
 const playerRoutes = require('./routes/players');
 const uiRoutes = require('./routes/ui');
 const { handleConnection } = require('./ws/wsHandler');
 const { TournamentManager } = require('./managers/TournamentManager');
 const { authMiddleware } = require('./middleware/auth');
+
 const app = express();
 const server = http.createServer(app);
 const wss = new WebSocketServer({ server });
+
 const ACESS_PASSWORD = process.env.DASHBOARD_PASSWORD || "&Zi1*He5?Ns8!Vq2@Jc7#Tl4$Bx9%Rf3^Wp6&Md1*Ky5?Og8!Ua2@Zn7#Eh4$Cs9%Tv3^Lj6&Qr1*Fp5?Xm8!Bd2@Kw7#Ny4$Hg9%Ro3^Ve6&Ta1*Jz5?Cu8!Ls2@Df7#Qx4$Pm9%Wi3^Ak6&Yn1*";
 
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser('seu_segredo_aqui')); 
+app.use(cookieParser('secret_token_key'));
+
 app.get('/login', (req, res) => {
     res.send(`
         <!DOCTYPE html>
@@ -38,7 +42,7 @@ app.get('/login', (req, res) => {
         <body>
             <div class="login-container">
                 <h2>Acesso Restrito</h2>
-                ${req.query.error ? '<div class="error">Senha incorreta!</div>' : ''}
+                \${req.query.error ? '<div class="error">Senha incorreta!</div>' : ''}
                 <form action="/login" method="POST">
                     <input type="password" name="password" placeholder="Digite a senha mestre" required autocomplete="off">
                     <button type="submit">Entrar</button>
@@ -48,13 +52,13 @@ app.get('/login', (req, res) => {
         </html>
     `);
 });
+
 app.post('/login', (req, res) => {
     const { password } = req.body;
-
     if (password === ACESS_PASSWORD) {
         res.cookie('auth_session', 'authenticated', { 
             httpOnly: true, 
-            secure: false,
+            secure: false, 
             sameSite: 'strict' 
         });
         return res.redirect('/dashboard');
@@ -62,19 +66,23 @@ app.post('/login', (req, res) => {
         return res.redirect('/login?error=true');
     }
 });
+
 app.get('/logout', (req, res) => {
     res.clearCookie('auth_session');
     res.redirect('/login');
 });
+
 const checkDashboardAuth = (req, res, next) => {
     if (req.cookies.auth_session === 'authenticated') {
         return next();
     }
     res.redirect('/login');
 };
+
 app.get('/health', (req, res) => res.json({ status: 'ok', server: 'ZestyBackboneGztxx7' }));
 app.get('/dashboard/token', checkDashboardAuth, (req, res) => res.json({ token: process.env.API_TOKEN || '' }));
 app.use('/dashboard', checkDashboardAuth, uiRoutes);
+
 app.use('/api/tournaments', authMiddleware, tournamentRoutes);
 app.use('/api/players', authMiddleware, playerRoutes);
 
@@ -84,8 +92,8 @@ TournamentManager.init();
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
-  console.log(`[PastBackboneGztxx7] Rodando na porta ${PORT}`);
-  console.log(`[PastBackboneGztxx7] Dashboard: http://localhost:${PORT}/dashboard`);
+  console.log(`[PastBackboneGztxx7] Rodando na porta \${PORT}`);
+  console.log(`[PastBackboneGztxx7] Dashboard: http://localhost:\${PORT}/dashboard`);
 });
 
 module.exports = { app, server };
