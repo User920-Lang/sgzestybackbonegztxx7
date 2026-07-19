@@ -26,7 +26,7 @@ app.use(session({
 }));
 
 // Senha do dashboard via variável de ambiente
-const DASHBOARD_PASSWORD = process.env.DASHBOARD_PASSWORD || '78*18^_A=2q+¨ba';
+const DASHBOARD_PASSWORD = process.env.DASHBOARD_PASSWORD || '78*18^_A=2q+¨ba32z2@@!!t$|D';
 
 // Health check
 app.get('/health', (req, res) => {
@@ -40,8 +40,10 @@ app.get('/dashboard/token', (req, res) => {
 
 // Middleware global para proteger todas as rotas do dashboard
 function dashboardAuthMiddleware(req, res, next) {
+    const path = req.originalUrl;
+
     // Permitir acesso às rotas de login/logout sem autenticação
-    if (req.path === '/' || req.path === '/login' || req.path === '/logout') {
+    if (path === '/dashboard' || path === '/dashboard/' || path === '/dashboard/login' || path === '/dashboard/logout') {
         return next();
     }
 
