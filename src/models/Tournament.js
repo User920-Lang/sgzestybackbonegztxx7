@@ -37,7 +37,7 @@ function createTournament(overrides = {}) {
     imageUrl:            overrides.imageUrl || 'https://cdn.discordapp.com/attachments/1493765303501590639/1526973833007992973/Polish_20260705_175701784.jpg?ex=6a5c4473&is=6a5af2f3&hm=5fe51d6cefb301c9a1713568292c6b02211732b12ea9568e775de4e08ecc1384&',
     iconUrl:             overrides.iconUrl || 'https://cdn.discordapp.com/attachments/1493765303501590639/1526973833007992973/Polish_20260705_175701784.jpg?ex=6a5c4473&is=6a5af2f3&hm=5fe51d6cefb301c9a1713568292c6b02211732b12ea9568e775de4e08ecc1384&',
     sponsorImageUrl:     overrides.sponsorImageUrl || '',
-    themeColor:          overrides.themeColor || '#008000',
+    themeColor:          overrides.themeColor || '#00800',
     status:              TournamentStatus.REGISTRATION,
     type:                TournamentType.CLASSIC,
     time:                startTime.toISOString(),
