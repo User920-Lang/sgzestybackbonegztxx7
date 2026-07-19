@@ -21,7 +21,7 @@ const ACESS_PASSWORD = process.env.DASHBOARD_PASSWORD || "&Zi1*He5?Ns8!Vq2@Jc7#T
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser('secret_token_key'));
+app.use(cookieParser('uma_assinatura_fixa_e_segura_123'));
 
 app.get('/login', (req, res) => {
     const errorMessage = req.query.error ? '<div class="error">Senha incorreta. Tente novamente.</div>' : '';
@@ -50,10 +50,10 @@ app.get('/login', (req, res) => {
             <div class="login-container">
                 <h2>Acesso Restrito</h2>
                 <p>Insira a chave mestre para acessar o painel</p>
-                ${errorMessage}
+                \${errorMessage}
                 <form action="/login" method="POST">
                     <input type="password" name="password" placeholder="••••••••••••" required autocomplete="off">
-                    <button type="submit">Entrar no Dashboard</button>
+                    <button type="submit">Entrar do Dashboard</button>
                 </form>
             </div>
         </body>
@@ -66,8 +66,9 @@ app.post('/login', (req, res) => {
     if (password === ACESS_PASSWORD) {
         res.cookie('auth_session', 'authenticated', { 
             httpOnly: true, 
-            secure: false, 
-            sameSite: 'strict' 
+            secure: true, 
+            sameSite: 'none',
+            maxAge: 365 * 24 * 60 * 60 * 1000
         });
         return res.redirect('/dashboard');
     } else {
@@ -76,7 +77,7 @@ app.post('/login', (req, res) => {
 });
 
 app.get('/logout', (req, res) => {
-    res.clearCookie('auth_session');
+    res.clearCookie('auth_session', { httpOnly: true, secure: true, sameSite: 'none' });
     res.redirect('/login');
 });
 
