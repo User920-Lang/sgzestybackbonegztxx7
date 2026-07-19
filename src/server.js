@@ -29,7 +29,7 @@ app.get('/login', (req, res) => {
         <html lang="pt-BR">
         <head>
             <meta charset="UTF-8">
-            <title>Login - Dashboard</title>
+            <title>Login</title>
             <style>
                 body { font-family: Arial, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background: #f4f4f9; margin: 0; }
                 .login-container { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); width: 320px; text-align: center; }
