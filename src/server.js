@@ -3,6 +3,7 @@ const express = require('express');
 const { WebSocketServer } = require('ws');
 const http = require('http');
 const cors = require('cors');
+const session = require('express-session');
 
 const tournamentRoutes = require('./routes/tournaments');
 const playerRoutes = require('./routes/players');
@@ -18,58 +19,54 @@ const wss = new WebSocketServer({ server });
 app.use(cors());
 app.use(express.json());
 
-const DASHBOARD_PASSWORD = "78*18^_A=2q+¨ba";
+app.use(session({
+    secret: 'gztxx7_secret_key',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        httpOnly: true,
+        sameSite: 'lax'
+    }
+}));
+
+const DASHBOARD_PASSWORD = '78*18^_A=2q+¨b!*8b2ui1*(*(f32iu92))kda';
 
 app.get('/health', (req, res) => {
-    res.json({
-        status: 'ok',
-        server: 'ZestyBackboneGztxx7'
-    });
-});
-
-app.get('/dashboard/token', (req, res) => {
-    res.json({
-        token: process.env.API_TOKEN || ''
-    });
+    res.json({ status: 'ok', server: 'PastBackboneGztxx7' });
 });
 
 app.get('/dashboard', (req, res) => {
+    if (req.session.dashboardAuth) {
+        return res.redirect('/dashboard/home');
+    }
+
     res.send(`
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <title>Dashboard Login</title>
-
 <style>
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-}
-
+*{margin:0;padding:0;box-sizing:border-box;}
 body{
     background:#111;
     display:flex;
     justify-content:center;
     align-items:center;
     height:100vh;
-    font-family:Arial;
+    font-family:Arial,sans-serif;
 }
-
 .box{
     width:360px;
     background:#1b1b1b;
     padding:30px;
     border-radius:12px;
 }
-
 h2{
     color:white;
     text-align:center;
     margin-bottom:20px;
 }
-
 input{
     width:100%;
     padding:12px;
@@ -79,7 +76,6 @@ input{
     color:white;
     font-size:15px;
 }
-
 button{
     width:100%;
     margin-top:15px;
@@ -91,52 +87,54 @@ button{
     font-size:15px;
     cursor:pointer;
 }
-
-button:hover{
-    background:#1b6fe0;
-}
-
+button:hover{background:#1b6fe0;}
 #error{
     color:#ff5555;
     text-align:center;
     margin-top:15px;
 }
 </style>
-
 </head>
-
 <body>
 
 <div class="box">
+    <h2>Dashboard Login</h2>
 
-<h2>Dashboard Login</h2>
+    <input
+        id="password"
+        type="password"
+        placeholder="Password"
+        autocomplete="off"
+        spellcheck="false"
+        onkeydown="if(event.key==='Enter')login()"
+    >
 
-<input
-id="password"
-type="password"
-placeholder="Password"
-onkeydown="if(event.key==='Enter')login()">
-
-<button onclick="login()">Login</button>
-
-<div id="error"></div>
-
+    <button onclick="login()">Login</button>
+    <div id="error"></div>
 </div>
 
 <script>
+window.onload = () => {
+    const input = document.getElementById("password");
+    input.value = "";
+    input.focus();
+};
 
-function login(){
+async function login() {
+    const password = document.getElementById("password").value;
 
-    const password=document.getElementById("password").value;
+    const response = await fetch("/dashboard/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password })
+    });
 
-    if(password==="78*18^_A=2q+¨ba"){
-        window.location="/dashboard/home";
-    }else{
-        document.getElementById("error").innerHTML="Wrong password!";
+    if (response.ok) {
+        window.location.href = "/dashboard/home";
+    } else {
+        document.getElementById("error").textContent = "Wrong password!";
     }
-
 }
-
 </script>
 
 </body>
@@ -144,10 +142,33 @@ function login(){
 `);
 });
 
+app.post('/dashboard/login', (req, res) => {
+    const { password } = req.body;
+
+    if (password === DASHBOARD_PASSWORD) {
+        req.session.dashboardAuth = true;
+        return res.json({ success: true });
+    }
+
+    res.status(401).json({ success: false, message: 'Wrong password' });
+});
+
+app.get('/dashboard/logout', (req, res) => {
+    req.session.destroy(() => {
+        res.redirect('/dashboard');
+    });
+});
+
+app.use('/dashboard/home', (req, res, next) => {
+    if (req.session.dashboardAuth) {
+        return next();
+    }
+    res.redirect('/dashboard');
+});
+
 app.use('/dashboard/home', uiRoutes);
 
 app.use(authMiddleware);
-
 app.use('/api/tournaments', tournamentRoutes);
 app.use('/api/players', playerRoutes);
 
